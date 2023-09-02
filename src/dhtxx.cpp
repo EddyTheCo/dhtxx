@@ -64,13 +64,13 @@ DHT44 |      |      |      |      |      |
     qDebug()<<"byte[4] :"<<byte[4];
     if (chksum == byte[0])
     {
-	    qDebug()<<"chksum == byte[0]";
+        qDebug()<<"chksum == byte[0]";
         if (model == DHT11)
         {
-	    qDebug()<<"model == DHT11";
+            qDebug()<<"model == DHT11";
             if ((byte[1] == 0) && (byte[3] == 0))
             {
-	    qDebug()<<"byte[1] == 0) && (byte[3] == 0";
+                qDebug()<<"byte[1] == 0) && (byte[3] == 0";
                 valid = 1;
 
                 t = byte[2];
@@ -84,7 +84,7 @@ DHT44 |      |      |      |      |      |
         }
         else if (model == DHTXX)
         {
-	    qDebug()<<"model == DHTXX";
+            qDebug()<<"model == DHTXX";
             valid = 1;
 
             h = ((float)((byte[4]<<8) + byte[3]))/10.0;
@@ -99,7 +99,7 @@ DHT44 |      |      |      |      |      |
         }
         else /* AUTO */
         {
-	    qDebug()<<"AUTO";
+            qDebug()<<"AUTO";
             valid = 1;
 
             /* Try DHTXX first. */
@@ -116,12 +116,12 @@ DHT44 |      |      |      |      |      |
 
             if (!valid)
             {
-	    qDebug()<<"!valid";
+                qDebug()<<"!valid";
                 /* If not DHTXX try DHT11. */
 
                 if ((byte[1] == 0) && (byte[3] == 0))
                 {
-	    qDebug()<<"If not DHTXX try DHT11.";
+                    qDebug()<<"If not DHTXX try DHT11.";
                     valid = 1;
 
                     t = byte[2];
@@ -137,17 +137,17 @@ DHT44 |      |      |      |      |      |
 
         if (valid)
         {
-	    qDebug()<<"valid";
+            qDebug()<<"valid";
             status = DHT_GOOD;
 
             *rh = h;
             *temp = t;
         }
         else
-	{
-	    qDebug()<<"no valid";
-		status = DHT_BAD_DATA;
-	}
+        {
+            qDebug()<<"no valid";
+            status = DHT_BAD_DATA;
+        }
     }
     else status = DHT_BAD_CHECKSUM;
 
@@ -164,39 +164,33 @@ void afunc(int e, lgGpioAlert_p evt, void *data)
 
     for (i=0; i<e; i++)
     {
-
-        if (evt[i].report.level != LG_TIMEOUT)
+        qDebug()<<"bits:"<<bits;
+        if (bits<40)
         {
 
             now_tick = evt[i].report.timestamp;
             edge_len = now_tick - last_tick;
             last_tick = now_tick;
-            if (edge_len > 1e6) // a millisecond
-            {
-                reading = 0;
-                bits = 0;
-            }
-            else
-            {
-                reading <<= 1;
-                if (edge_len > 1e5) reading |= 1; // longer than 100 micros
-                ++bits;
-            }
+
+            reading <<= 1;
+            if (edge_len > 1e5) reading |= 1; // longer than 100 micros
+            ++bits;
+
         }
         else
         {
             float t,h;
-qDebug()<<"ready to decode:"<<reading;
-qDebug()<<"bits:"<<bits;
+            qDebug()<<"ready to decode:"<<reading;
             if(decode_dhtxx(reading, DHTAUTO, &t, &h)==DHT_GOOD)
             {
 
-qDebug()<<"decode:"<<t<<" "<<h;
+                qDebug()<<"decode:"<<t<<" "<<h;
 
                 static_cast<dhtxx*>(data)->setValues(t,h);
             }
             reading = 0;
             bits = 0;
+            return;
         }
     }
 }
@@ -206,11 +200,10 @@ void dhtxx::init(void)
     chip = lgGpiochipOpen(0);
     lgGpioSetUser(chip, "niagra");
     lgGpioSetSamplesFunc(afunc, (void*)this);
-    lgGpioSetWatchdog(chip,m_gpio_number , 1000); /* millisecond watchdog */
 }
 void dhtxx::read()
 {
-	qDebug()<<"dhtxx::read";
+    qDebug()<<"dhtxx::read";
     auto err = lgGpioClaimOutput(chip, 0, m_gpio_number, 0);
     if (err) qDebug()<<"Set out err"<<err;
     usleep(15000);
