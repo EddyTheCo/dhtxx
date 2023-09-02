@@ -13,7 +13,7 @@
 #define DHT_BAD_DATA     2
 #define DHT_TIMEOUT      3
 
-dhtxx::dhtxx(quint8 gpio_number,QObject *parent):QObject(parent),temperature(0),humidity(0),m_gpio_number(gpio_number),chip(0)
+dhtxx::dhtxx(quint8 gpio_number,QObject *parent):QObject(parent),temperature(0),humidity(0),m_gpio_number(gpio_number),chip(0),mstate(Ready)
 {
     init();
 };
@@ -164,7 +164,6 @@ void afunc(int e, lgGpioAlert_p evt, void *data)
 
     for (i=0; i<e; i++)
     {
-        qDebug()<<"bits:"<<bits;
         if (bits<40)
         {
 
@@ -203,11 +202,16 @@ void dhtxx::init(void)
 }
 void dhtxx::read()
 {
-    qDebug()<<"dhtxx::read";
-    auto err = lgGpioClaimOutput(chip, 0, m_gpio_number, 0);
-    if (err) qDebug()<<"Set out err"<<err;
-    usleep(15000);
-    err = lgGpioClaimAlert(
-                chip, 0, LG_RISING_EDGE, m_gpio_number, -1);
-    if (err) qDebug()<<"set event err"<< err;
+    if(mstate)
+    {
+        mstate=Null;
+        qDebug()<<"dhtxx::read";
+        auto err = lgGpioClaimOutput(chip, 0, m_gpio_number, 0);
+        if (err) qDebug()<<"Set out err"<<err;
+
+        err = lgGpioClaimAlert(
+                    chip, 0, LG_RISING_EDGE, m_gpio_number, -1);
+        if (err) qDebug()<<"set event err"<< err;
+    }
+
 }
