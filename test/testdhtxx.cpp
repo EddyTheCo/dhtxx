@@ -13,7 +13,7 @@ int main(int argc, char** argv)
 
     quint8 gpio=4,secs=3;
     if(argc>1)gpio=atoi(argv[1]);
-    if(argc>2)gpio=atoi(argv[2]);
+    if(argc>2)secs=atoi(argv[2]);
     
     QTimer *timer = new QTimer(&a);
     auto sensor=dhtxx(gpio,&a);
