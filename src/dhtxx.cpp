@@ -201,6 +201,7 @@ void dhtxx::init(void)
     chip = lgGpiochipOpen(0);
     lgGpioSetUser(chip, "niagra");
     lgGpioSetSamplesFunc(afunc, (void*)this);
+    lgGpioSetWatchdog(chip,m_gpio_number , 1000); /* millisecond watchdog */
 }
 void dhtxx::read()
 {
