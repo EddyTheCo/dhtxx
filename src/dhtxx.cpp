@@ -160,7 +160,7 @@ void afunc(int e, lgGpioAlert_p evt, void *data)
     static int bits = 0;
     static uint64_t reading = 0;
     static uint64_t last_tick = 0;
-    qDebug()<<"bits:"<<bits;
+
     for (i=0; i<e; i++)
     {
         if (bits<40)
@@ -173,7 +173,7 @@ void afunc(int e, lgGpioAlert_p evt, void *data)
             reading <<= 1;
             if (edge_len > 1e5) reading |= 1; // longer than 100 micros
             ++bits;
-
+            qDebug()<<"bits:"<<bits;
         }
         else
         {
@@ -204,7 +204,7 @@ void dhtxx::read()
     qDebug()<<"dhtxx::read";
     auto err = lgGpioClaimOutput(chip, 0, m_gpio_number, 0);
     if (err) qDebug()<<"Set out err"<<err;
-    usleep(500);
+    usleep(5000);
     err = lgGpioClaimAlert(
                 chip, 0, LG_RISING_EDGE, m_gpio_number, -1);
     if (err) qDebug()<<"set event err"<< err;
