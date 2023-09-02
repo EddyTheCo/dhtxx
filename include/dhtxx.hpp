@@ -16,6 +16,7 @@ public:
         humidity=h;
         emit got_reading();
     };
+    void setBtime(quint32 t){btime=t;}
     float temp()const{return temperature;}
     float humi()const{return humidity;}
 signals:
@@ -24,5 +25,6 @@ private:
     void init();
     float temperature,humidity;
     quint8 m_gpio_number;
+    quint32 btime;
     int chip;
 };

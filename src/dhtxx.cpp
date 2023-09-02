@@ -12,7 +12,8 @@
 #define DHT_BAD_DATA     2
 #define DHT_TIMEOUT      3
 
-dhtxx::dhtxx(quint8 gpio_number,QObject *parent):QObject(parent),temperature(0),humidity(0),m_gpio_number(gpio_number),chip(0)
+dhtxx::dhtxx(quint8 gpio_number,QObject *parent):QObject(parent),
+    temperature(0),humidity(0),m_gpio_number(gpio_number),chip(0),btime(10000)
 {
     init();
 };
@@ -204,7 +205,7 @@ void dhtxx::read()
     qDebug()<<"dhtxx::read";
     auto err = lgGpioClaimOutput(chip, 0, m_gpio_number, 0);
     if (err) qDebug()<<"Set out err"<<err;
-    usleep(5000);
+    usleep(btime);
     err = lgGpioClaimAlert(
                 chip, 0, LG_RISING_EDGE, m_gpio_number, -1);
     if (err) qDebug()<<"set event err"<< err;
