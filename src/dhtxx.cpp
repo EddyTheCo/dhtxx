@@ -57,6 +57,7 @@ DHT44 |      |      |      |      |      |
 
     valid = 0;
     qDebug()<<"chksum :"<<chksum;
+    qDebug()<<"byte[0] :"<<byte[0];
     qDebug()<<"byte[1] :"<<byte[1];
     qDebug()<<"byte[2] :"<<byte[2];
     qDebug()<<"byte[3] :"<<byte[3];
@@ -160,14 +161,13 @@ void afunc(int e, lgGpioAlert_p evt, void *data)
     static int bits = 0;
     static uint64_t reading = 0;
     static uint64_t last_tick = 0;
-qDebug()<<"afunc";
-qDebug()<<"e:"<<e;
+
     for (i=0; i<e; i++)
     {
-qDebug()<<"i:"<<i;
+
         if (evt[i].report.level != LG_TIMEOUT)
         {
-qDebug()<<"evt[i].report.level:"<<evt[i].report.level;
+
             now_tick = evt[i].report.timestamp;
             edge_len = now_tick - last_tick;
             last_tick = now_tick;
@@ -187,11 +187,12 @@ qDebug()<<"evt[i].report.level:"<<evt[i].report.level;
         {
             float t,h;
 qDebug()<<"ready to decode:"<<reading;
+qDebug()<<"bits:"<<bits;
             if(decode_dhtxx(reading, DHTAUTO, &t, &h)==DHT_GOOD)
             {
 
 qDebug()<<"decode:"<<t<<" "<<h;
-qDebug()<<"bits:"<<bits;
+
                 static_cast<dhtxx*>(data)->setValues(t,h);
             }
             reading = 0;
