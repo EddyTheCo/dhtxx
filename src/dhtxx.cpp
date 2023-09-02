@@ -164,19 +164,22 @@ void afunc(int e, lgGpioAlert_p evt, void *data)
 
     for (i=0; i<e; i++)
     {
-        if (bits<40)
+        now_tick = evt[i].report.timestamp;
+        edge_len = now_tick - last_tick;
+        last_tick = now_tick;
+
+        if (edge_len > 1e6) // a millisecond
         {
-
-            now_tick = evt[i].report.timestamp;
-            edge_len = now_tick - last_tick;
-            last_tick = now_tick;
-
-            reading <<= 1;
-            if (edge_len > 1e5) reading |= 1; // longer than 100 micros
-            ++bits;
-            qDebug()<<"bits:"<<bits;
+            reading = 0;
+            bits = 0;
+            return;
         }
-        else
+
+        reading <<= 1;
+        if (edge_len > 1e5) reading |= 1; // longer than 100 micros
+        ++bits;
+        qDebug()<<"bits:"<<bits;
+        if(bits==40)
         {
             float t,h;
             qDebug()<<"ready to decode:"<<reading;
@@ -191,7 +194,9 @@ void afunc(int e, lgGpioAlert_p evt, void *data)
             bits = 0;
             return;
         }
+
     }
+
 }
 
 void dhtxx::init(void)
