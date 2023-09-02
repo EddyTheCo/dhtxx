@@ -144,7 +144,8 @@ void afunc(int e, lgGpioAlert_p evt, void *data)
     static int bits = 0;
     static uint64_t reading = 0;
     static uint64_t last_tick = 0;
-
+qDebug()<<"afunc";
+qDebug()<<"data:"<<static_cast<dhtxx*>(data)->temp();
     for (i=0; i<e; i++)
     {
         if (evt[i].report.level != LG_TIMEOUT)
@@ -185,6 +186,7 @@ void dhtxx::init(void)
 }
 void dhtxx::read()
 {
+	qDebug()<<"dhtxx::read";
     auto err = lgGpioClaimOutput(chip, 0, m_gpio_number, 0);
     if (err) qDebug()<<"Set out err"<<err;
     usleep(15000);
