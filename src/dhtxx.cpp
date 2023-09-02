@@ -59,10 +59,13 @@ DHT44 |      |      |      |      |      |
 
     if (chksum == byte[0])
     {
+	    qDebug()<<"chksum == byte[0]";
         if (model == DHT11)
         {
+	    qDebug()<<"model == DHT11";
             if ((byte[1] == 0) && (byte[3] == 0))
             {
+	    qDebug()<<"byte[1] == 0) && (byte[3] == 0";
                 valid = 1;
 
                 t = byte[2];
@@ -76,6 +79,7 @@ DHT44 |      |      |      |      |      |
         }
         else if (model == DHTXX)
         {
+	    qDebug()<<"model == DHTXX";
             valid = 1;
 
             h = ((float)((byte[4]<<8) + byte[3]))/10.0;
@@ -90,6 +94,7 @@ DHT44 |      |      |      |      |      |
         }
         else /* AUTO */
         {
+	    qDebug()<<"AUTO";
             valid = 1;
 
             /* Try DHTXX first. */
@@ -106,10 +111,12 @@ DHT44 |      |      |      |      |      |
 
             if (!valid)
             {
+	    qDebug()<<"!valid";
                 /* If not DHTXX try DHT11. */
 
                 if ((byte[1] == 0) && (byte[3] == 0))
                 {
+	    qDebug()<<"If not DHTXX try DHT11.";
                     valid = 1;
 
                     t = byte[2];
@@ -125,12 +132,17 @@ DHT44 |      |      |      |      |      |
 
         if (valid)
         {
+	    qDebug()<<"valid";
             status = DHT_GOOD;
 
             *rh = h;
             *temp = t;
         }
-        else status = DHT_BAD_DATA;
+        else
+	{
+	    qDebug()<<"no valid";
+		status = DHT_BAD_DATA;
+	}
     }
     else status = DHT_BAD_CHECKSUM;
 
@@ -146,10 +158,13 @@ void afunc(int e, lgGpioAlert_p evt, void *data)
     static uint64_t last_tick = 0;
 qDebug()<<"afunc";
 qDebug()<<"data:"<<static_cast<dhtxx*>(data)->temp();
+qDebug()<<"e:"<<e;
     for (i=0; i<e; i++)
     {
+qDebug()<<"i:"<<i;
         if (evt[i].report.level != LG_TIMEOUT)
         {
+qDebug()<<"evt[i].report.level:"<<evt[i].report.level;
             now_tick = evt[i].report.timestamp;
             edge_len = now_tick - last_tick;
             last_tick = now_tick;
@@ -168,8 +183,11 @@ qDebug()<<"data:"<<static_cast<dhtxx*>(data)->temp();
         else
         {
             float t,h;
+qDebug()<<"ready to decode";
             if(decode_dhtxx(reading, DHTAUTO, &t, &h)==DHT_GOOD)
             {
+
+qDebug()<<"decode:"<<t<<" "<<h;
                 static_cast<dhtxx*>(data)->setValues(t,h);
             }
             reading = 0;
