@@ -2,7 +2,6 @@
 #include <unistd.h>
 #include<QDebug>
 
-
 #include"lgpio.h"
 #define DHTAUTO 0
 #define DHT11   1
@@ -208,7 +207,7 @@ void dhtxx::read()
         qDebug()<<"dhtxx::read";
         auto err = lgGpioClaimOutput(chip, 0, m_gpio_number, 0);
         if (err) qDebug()<<"Set out err"<<err;
-
+        usleep(15000);
         err = lgGpioClaimAlert(
                     chip, 0, LG_RISING_EDGE, m_gpio_number, -1);
         if (err) qDebug()<<"set event err"<< err;
