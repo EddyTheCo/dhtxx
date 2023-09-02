@@ -198,15 +198,16 @@ void dhtxx::init(void)
     chip = lgGpiochipOpen(0);
     lgGpioSetUser(chip, "niagra");
     lgGpioSetSamplesFunc(afunc, (void*)this);
+    const auto err = lgGpioClaimAlert(
+                chip, 0, LG_RISING_EDGE, m_gpio_number, -1);
+    if (err) qDebug()<<"set event err"<< err;
 }
 void dhtxx::read()
 {
     qDebug()<<"dhtxx::read";
-    auto err = lgGpioClaimOutput(chip, 0, m_gpio_number, 0);
+    const auto err = lgGpioClaimOutput(chip, 0, m_gpio_number, 0);
     if (err) qDebug()<<"Set out err"<<err;
-    usleep(15000);
-    err = lgGpioClaimAlert(
-                chip, 0, LG_RISING_EDGE, m_gpio_number, -1);
-    if (err) qDebug()<<"set event err"<< err;
+    //usleep(1000);
+
 
 }
