@@ -56,7 +56,11 @@ DHT44 |      |      |      |      |      |
     chksum = (byte[1] + byte[2] + byte[3] + byte[4]) & 0xFF;
 
     valid = 0;
-
+    qDebug()<<"chksum :"<<chksum;
+    qDebug()<<"byte[1] :"<<byte[1];
+    qDebug()<<"byte[2] :"<<byte[2];
+    qDebug()<<"byte[3] :"<<byte[3];
+    qDebug()<<"byte[4] :"<<byte[4];
     if (chksum == byte[0])
     {
 	    qDebug()<<"chksum == byte[0]";
@@ -157,7 +161,6 @@ void afunc(int e, lgGpioAlert_p evt, void *data)
     static uint64_t reading = 0;
     static uint64_t last_tick = 0;
 qDebug()<<"afunc";
-qDebug()<<"data:"<<static_cast<dhtxx*>(data)->temp();
 qDebug()<<"e:"<<e;
     for (i=0; i<e; i++)
     {
@@ -183,11 +186,12 @@ qDebug()<<"evt[i].report.level:"<<evt[i].report.level;
         else
         {
             float t,h;
-qDebug()<<"ready to decode";
+qDebug()<<"ready to decode:"<<reading;
             if(decode_dhtxx(reading, DHTAUTO, &t, &h)==DHT_GOOD)
             {
 
 qDebug()<<"decode:"<<t<<" "<<h;
+qDebug()<<"bits:"<<bits;
                 static_cast<dhtxx*>(data)->setValues(t,h);
             }
             reading = 0;
