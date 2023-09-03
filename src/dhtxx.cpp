@@ -164,46 +164,50 @@ void afunc(int e, lgGpioAlert_p evt, void *data)
 
     for (i=0; i<e; i++)
     {
-        now_tick = evt[i].report.timestamp;
-        edge_len = now_tick - last_tick;
-        last_tick = now_tick;
-        qDebug()<<"edge_len:"<<edge_len/1000;
-        if (edge_len > 1e6) // a millisecond
+        if (evt[i].report.level != LG_TIMEOUT)
         {
-            reading = 0;
-            bits = 0;
-        }
-        else
-        {
-            reading <<= 1;
-            if (edge_len > 1e5)
+            now_tick = evt[i].report.timestamp;
+            edge_len = now_tick - last_tick;
+            last_tick = now_tick;
+            qDebug()<<"edge_len:"<<edge_len/1000;
+            if (edge_len > 1e6) // a millisecond
             {
-                reading |= 1; // longer than 100 micros
-                qDebug()<<"Bit value:1";
+                reading = 0;
+                bits = 0;
             }
             else
             {
-                qDebug()<<"Bit value:0";
-            }
-            ++bits;
-        }
+                reading <<= 1;
+                if (edge_len > 1e5)
+                {
+                    reading |= 1; // longer than 100 micros
+                    qDebug()<<"Bit value:1";
+                }
+                else
+                {
+                    qDebug()<<"Bit value:0";
+                }
+                ++bits;
+                qDebug()<<"bits:"<<bits;
 
-        qDebug()<<"bits:"<<bits;
-        if(bits==40)
+            }
+
+        }
+        else
         {
             float t,h;
             qDebug()<<"ready to decode:"<<reading;
-            if(decode_dhtxx(reading, DHTAUTO, &t, &h)==DHT_GOOD)
+            auto var=decode_dhtxx(reading, DHTAUTO, &t, &h);
+            qDebug()<<"dec_status:"<<var;
+            if(var==DHT_GOOD)
             {
-
                 qDebug()<<"decode:"<<t<<" "<<h;
-
                 static_cast<dhtxx*>(data)->setValues(t,h);
             }
             reading = 0;
             bits = 0;
-            return;
         }
+
 
     }
 
@@ -214,6 +218,7 @@ void dhtxx::init(void)
     chip = lgGpiochipOpen(0);
     lgGpioSetUser(chip, "niagra");
     lgGpioSetSamplesFunc(afunc, (void*)this);
+    lgGpioSetWatchdog(chip, m_gpio_number, 1000);
 }
 void dhtxx::read()
 {
