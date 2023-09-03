@@ -156,7 +156,7 @@ void afunc(int e, lgGpioAlert_p evt, void *data)
             now_tick = evt[i].report.timestamp;
             edge_len = now_tick - last_tick;
             last_tick = now_tick;
-            if (edge_len > 2e8) // 0.2 seconds
+            if (edge_len > 3e5) // 300 microseconds
             {
                 reading = 0;
                 bits = 0;
