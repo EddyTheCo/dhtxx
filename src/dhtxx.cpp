@@ -170,7 +170,7 @@ void afunc(int e, lgGpioAlert_p evt, void *data)
             edge_len = now_tick - last_tick;
             last_tick = now_tick;
             qDebug()<<"edge_len:"<<edge_len/1000;
-            if (edge_len > 1e6) // a millisecond
+            if (edge_len > 2e8) // 0.2 seconds
             {
                 reading = 0;
                 bits = 0;
@@ -195,17 +195,21 @@ void afunc(int e, lgGpioAlert_p evt, void *data)
         }
         else
         {
-            float t,h;
-            qDebug()<<"ready to decode:"<<reading;
-            auto var=decode_dhtxx(reading, DHTAUTO, &t, &h);
-            qDebug()<<"dec_status:"<<var;
-            if(var==DHT_GOOD)
+            if(bits>=30)
             {
-                qDebug()<<"decode:"<<t<<" "<<h;
-                static_cast<dhtxx*>(data)->setValues(t,h);
+                float t,h;
+                qDebug()<<"ready to decode:"<<reading;
+                auto var=decode_dhtxx(reading, DHTAUTO, &t, &h);
+                qDebug()<<"dec_status:"<<var;
+                if(var==DHT_GOOD)
+                {
+                    qDebug()<<"decode:"<<t<<" "<<h;
+                    static_cast<dhtxx*>(data)->setValues(t,h);
+                }
+                reading = 0;
+                bits = 0;
             }
-            reading = 0;
-            bits = 0;
+
         }
 
 
