@@ -13,7 +13,7 @@
 #define DHT_TIMEOUT      3
 
 dhtxx::dhtxx(quint8 gpio_number,QObject *parent):QObject(parent),
-    temperature(0),humidity(0),m_gpio_number(gpio_number),chip(0),btime(10000)
+    temperature(0),humidity(0),m_gpio_number(gpio_number),chip(0),btime(15000)
 {
     init();
 };
@@ -167,17 +167,27 @@ void afunc(int e, lgGpioAlert_p evt, void *data)
         now_tick = evt[i].report.timestamp;
         edge_len = now_tick - last_tick;
         last_tick = now_tick;
-
+        qDebug()<<"edge_len:"<<edge_len/1000;
         if (edge_len > 1e6) // a millisecond
         {
             reading = 0;
             bits = 0;
-            return;
+        }
+        else
+        {
+            reading <<= 1;
+            if (edge_len > 1e5)
+            {
+                reading |= 1; // longer than 100 micros
+                qDebug()<<"Bit value:1";
+            }
+            else
+            {
+                qDebug()<<"Bit value:0";
+            }
+            ++bits;
         }
 
-        reading <<= 1;
-        if (edge_len > 1e5) reading |= 1; // longer than 100 micros
-        ++bits;
         qDebug()<<"bits:"<<bits;
         if(bits==40)
         {
