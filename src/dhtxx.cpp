@@ -195,8 +195,6 @@ void afunc(int e, lgGpioAlert_p evt, void *data)
         }
         else
         {
-            if(bits>=30)
-            {
                 float t,h;
                 qDebug()<<"ready to decode:"<<reading;
                 auto var=decode_dhtxx(reading, DHTAUTO, &t, &h);
@@ -208,7 +206,7 @@ void afunc(int e, lgGpioAlert_p evt, void *data)
                 }
                 reading = 0;
                 bits = 0;
-            }
+
 
         }
 
@@ -231,6 +229,6 @@ void dhtxx::read()
     if (err) qDebug()<<"Set out err"<<err;
     usleep(btime);
     err = lgGpioClaimAlert(
-                chip, 0, LG_RISING_EDGE, m_gpio_number, -1);
+                chip, LG_SET_PULL_UP, LG_RISING_EDGE, m_gpio_number, -1);
     if (err) qDebug()<<"set event err"<< err;
 }
