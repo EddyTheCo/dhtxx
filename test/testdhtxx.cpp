@@ -8,7 +8,7 @@
 int main(int argc, char** argv)
 {
 
-	qDebug()<<"Application Started";
+    qDebug()<<"Application Started";
     auto a=QCoreApplication(argc, argv);
 
     quint8 gpio=4,secs=3;
@@ -25,10 +25,9 @@ int main(int argc, char** argv)
         qDebug()<<"Humidity:"<<sensor.humi();
     });
     QObject::connect(timer, &QTimer::timeout, &sensor,[&sensor]()
-		    {
-	qDebug()<<"timer execute";
-		    sensor.read();
-		    });
+    {
+        sensor.read();
+    });
     timer->start(secs*1000);
 
     return a.exec();
