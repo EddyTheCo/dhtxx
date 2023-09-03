@@ -56,6 +56,8 @@ DHT44 |      |      |      |      |      |
     chksum = (byte[1] + byte[2] + byte[3] + byte[4]) & 0xFF;
 
     valid = 0;
+    qDebug()<<"chksum:"<<chksum;
+    qDebug()<<"chksum:"<<byte[0];
     if (chksum == byte[0])
     {
 
@@ -173,10 +175,10 @@ void afunc(int e, lgGpioAlert_p evt, void *data)
         {
             float t,h;
 
-            if(decode_dhtxx(reading, DHTAUTO, &t, &h)==DHT_GOOD)
-            {
-                static_cast<dhtxx*>(data)->setValues(t,h);
-            }
+            decode_dhtxx(reading, DHT11, &t, &h);
+
+            static_cast<dhtxx*>(data)->setValues(t,h);
+
             reading = 0;
             bits = 0;
         }
