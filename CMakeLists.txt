@@ -14,15 +14,6 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 include(GNUInstallDirs)
-include(FetchContent)
-
-FetchContent_Declare(
-    lgpio
-    GIT_REPOSITORY https://github.com/EddyTheCo/lGPIOs.git
-    GIT_TAG main
-    FIND_PACKAGE_ARGS 0 CONFIG
-)
-FetchContent_MakeAvailable(lgpio)
 
 find_package(Qt6 COMPONENTS Core)
 
@@ -30,8 +21,30 @@ if (Qt6_FOUND)
     qt_standard_project_setup()
 endif(Qt6_FOUND)
 
+include(ExternalProject)
+ExternalProject_Add(lgpios
+  GIT_REPOSITORY https://github.com/joan2937/lg.git
+  GIT_TAG v0.2.2
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND "make"
+  BUILD_IN_SOURCE 1
+  INSTALL_COMMAND ""
+  PREFIX ${CMAKE_CURRENT_BINARY_DIR}/lg
+)
+
 add_library(dhtxx src/dhtxx.cpp include/dhtxx.hpp)
-target_link_libraries(dhtxx PRIVATE lgpio)
+
+add_dependencies(dhtxx lgpios)
+target_include_directories(dhtxx PUBLIC  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/lg/src/lgpios>)
+target_link_libraries(dhtxx PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/lg/src/lgpios/liblgpio.so.1)
+install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lg/src/lgpios/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/dhtxx
+    FILES_MATCHING PATTERN "*.h"
+)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lg/src/lgpios/liblgpio.so.1
+	DESTINATION ${CMAKE_INSTALL_LIBDIR} 
+)
 if (Qt6_FOUND)
     target_link_libraries(dhtxx PUBLIC  Qt6::Core)
 endif(Qt6_FOUND)
@@ -43,7 +56,7 @@ target_link_libraries(testdhtxx PRIVATE dhtxx)
 install(TARGETS testdhtxx DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 qt_add_executable(dhtxxBin test/dhtxx.c)
-target_link_libraries(dhtxxBin PRIVATE lgpio)
+target_link_libraries(dhtxxBin PRIVATE dhtxx)
 install(TARGETS dhtxxBin DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 install(TARGETS dhtxx EXPORT dhtxxTargets

@@ -1,6 +1,5 @@
 #pragma once
 
-#include<cstdlib>
 #include<QObject>
 using namespace std;
 class dhtxx : public QObject
