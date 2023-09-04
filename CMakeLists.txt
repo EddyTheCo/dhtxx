@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
 
 
-project(DHTXX VERSION 1.0 DESCRIPTION "Library to work with DHT11 temperature and humidity sensors " LANGUAGES CXX)
+project(DHTXX VERSION 1.0 DESCRIPTION "Library to work with DHT11 temperature and humidity sensors " LANGUAGES C CXX)
 
 set(default_build_type "Release")
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -41,6 +41,10 @@ target_include_directories(dhtxx PUBLIC  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURC
 qt_add_executable(testdhtxx test/testdhtxx.cpp)
 target_link_libraries(testdhtxx PRIVATE dhtxx)
 install(TARGETS testdhtxx DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+qt_add_executable(dhtxxBin test/dhtxx.c)
+target_link_libraries(dhtxxBin PRIVATE lgpio)
+install(TARGETS dhtxxBin DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 install(TARGETS dhtxx EXPORT dhtxxTargets
     DESTINATION ${CMAKE_INSTALL_LIBDIR}
