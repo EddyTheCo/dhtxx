@@ -30,6 +30,7 @@ ExternalProject_Add(lgpios
   BUILD_IN_SOURCE 1
   INSTALL_COMMAND ""
   PREFIX ${CMAKE_CURRENT_BINARY_DIR}/lg
+  BUILD_BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/lg/src/lgpios/liblgpio.so.1
 )
 
 add_library(dhtxx src/dhtxx.cpp include/dhtxx.hpp)
