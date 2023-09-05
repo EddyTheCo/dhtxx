@@ -21,6 +21,8 @@ if (Qt6_FOUND)
     qt_standard_project_setup()
 endif(Qt6_FOUND)
 
+set(ENV CROSS_PREFIX ${CROSS_PREFIX})
+
 include(ExternalProject)
 ExternalProject_Add(lgpios
   GIT_REPOSITORY https://github.com/joan2937/lg.git
