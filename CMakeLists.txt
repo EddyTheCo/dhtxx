@@ -18,9 +18,8 @@ include(FetchContent)
 
 FetchContent_Declare(
     lgpio
-    GIT_REPOSITORY https://github.com/EddyTheCo/lGPIOs.git
+    GIT_REPOSITORY https://github.com/EddyTheCo/lg.git
     GIT_TAG main
-    FIND_PACKAGE_ARGS 0 CONFIG
 )
 FetchContent_MakeAvailable(lgpio)
 
