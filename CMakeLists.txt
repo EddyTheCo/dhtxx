@@ -21,14 +21,13 @@ if (Qt6_FOUND)
     qt_standard_project_setup()
 endif(Qt6_FOUND)
 
-set(ENV CROSS_PREFIX ${CROSS_PREFIX})
 
 include(ExternalProject)
 ExternalProject_Add(lgpios
   GIT_REPOSITORY https://github.com/joan2937/lg.git
   GIT_TAG v0.2.2
   CONFIGURE_COMMAND ""
-  BUILD_COMMAND "make"
+  BUILD_COMMAND make CROSS_PREFIX=${CROSS_PREFIX}
   BUILD_IN_SOURCE 1
   INSTALL_COMMAND ""
   PREFIX ${CMAKE_CURRENT_BINARY_DIR}/lg
